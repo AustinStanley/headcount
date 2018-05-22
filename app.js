@@ -1,4 +1,3 @@
-
 const express = require('express')
 const bodyParser = require('body-parser')
 const low = require('lowdb')
@@ -96,4 +95,3 @@ low(adapter)
     .then(() => {
         app.listen(80, () => console.log('headcount listening on port 80'))
     })
-
