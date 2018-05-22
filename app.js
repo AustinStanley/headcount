@@ -4,6 +4,9 @@ const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
 
 const app = express()
+const server = require('http').Server(app)
+var io = require('socket.io')(server)
+
 app.use(bodyParser.json())
 
 const adapter = new FileAsync('db.json')
@@ -39,6 +42,14 @@ low(adapter)
                 .assign({ rsvp: req.body.rsvp })
                 .write()
                 .then(user => res.send(user))
+        })
+
+        io.on('connection', socket => {
+            console.log('connection received from ' + socket)
+            socket.emit('handshake')
+            socket.on('getusers', data => {
+                socket.emit('getusers', db.get('users'))
+            })
         })
 
         return db.defaults({users: [
@@ -93,5 +104,6 @@ low(adapter)
         ]}).write()
     })
     .then(() => {
-        app.listen(80, () => console.log('headcount listening on port 80'))
+        //app.listen(80, () => console.log('headcount listening on port 80'))
+        server.listen(80, () => console.log('headcount listening on port 80'))
     })
