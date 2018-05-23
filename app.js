@@ -102,7 +102,7 @@ io.on('connection', socket => {
             .write()
 
         socket.emit('rsvp', data)
-        socket.broadcast.emit('update')
+        socket.broadcast.emit('update', db.get('users').filter({ rsvp: true }).size().value())
     })
 
 })
