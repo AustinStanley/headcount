@@ -102,6 +102,7 @@ io.on('connection', socket => {
             .write()
 
         socket.emit('rsvp', data)
+        socket.broadcast.emit('update')
     })
 
 })
