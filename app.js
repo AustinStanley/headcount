@@ -84,6 +84,16 @@ io.on('connection', socket => {
         socket.emit('getnames', names)
     })
 
+    socket.on('getcoming', () => {
+        console.log('getcoming')
+        let names = db.get('users')
+            .filter({ rsvp: true })
+            .map('name')
+            .value()
+
+        socket.emit('getcoming', names)
+    })
+
     socket.on('getuser', data => {
         console.log('getuser: ' + data.name)
         socket.emit('getuser', db.get('users').find({ name: data.name }).value())
