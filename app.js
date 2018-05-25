@@ -13,61 +13,26 @@ app.use(bodyParser.json())
 const adapter = new FileSync('db.json')
 const db = low(adapter)
 
-db.defaults({users: [
-    {
-        name: 'Grandma',
-        rsvp: true
-    },
-    {
-        name: 'Austin',
-        rsvp: true
-    },
-    {
-        name: 'Nicole',
-        rsvp: true
-    },
-    {
-        name: 'Chris',
-        rsvp: true
-    },
-    {
-        name: 'Erin',
-        rsvp: true
-    },
-    {
-        name: 'Russell',
-        rsvp: true
-    },
-    {
-        name: 'Kristin',
-        rsvp: true
-    },
-    {
-        name: 'Dale',
-        rsvp: true
-    },
-    {
-        name: 'Leanne',
-        rsvp: true
-    },
-    {
-        name: 'Jared',
-        rsvp: true
-    },
-    {
-        name: 'Allison',
-        rsvp: false
-    },
-    {
-        name: 'Medora',
-        rsvp: false
-    }
-]}).write()
+db.defaults({ users: [] }).write()
 
 io.on('connection', socket => {
     socket.on('ping', () => {
         console.log('ping received')
         socket.emit('ping')
+    })
+
+    socket.on('register', data => {
+        console.log('register: ' + data.name)
+        const existing = db.get('users')
+            .find({ name: data.name })
+            .value()
+
+        if (!existing) {
+            db.get('users')
+                .push({ name: data.name, rsvp: true })
+                .write()
+        }
+        socket.emit('register')
     })
 
     socket.on('getall', () => {
